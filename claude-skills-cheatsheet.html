@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude.skills & Agent Teams - Quick Reference</title>
+    <style>
+        :root {
+            /* Claude-inspired color palette */
+            --claude-teal: #00a896;
+            --claude-teal-dark: #008080;
+            --claude-teal-light: #069494;
+            --claude-coral: #ff6f61;
+            --claude-peach: #DE7356;
+            --claude-slate-900: #0f172a;
+            --claude-slate-800: #1e293b;
+            --claude-slate-700: #334155;
+            --claude-slate-600: #475569;
+            --claude-slate-400: #94a3b8;
+            --claude-slate-300: #cbd5e1;
+            --claude-slate-200: #e2e8f0;
+            --claude-slate-100: #f1f5f9;
+            --claude-cream: #faf9f5;
+
+            /* Semantic colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: var(--claude-slate-100);
+            --bg-accent: var(--claude-cream);
+            --text-primary: var(--claude-slate-900);
+            --text-secondary: var(--claude-slate-600);
+            --text-muted: var(--claude-slate-400);
+            --border-color: var(--claude-slate-200);
+            --accent-primary: var(--claude-teal);
+            --accent-hover: var(--claude-teal-dark);
+            --accent-secondary: var(--claude-coral);
+
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            /* Typography */
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: var(--claude-slate-900);
+                --bg-secondary: var(--claude-slate-800);
+                --bg-accent: var(--claude-slate-700);
+                --text-primary: var(--claude-slate-100);
+                --text-secondary: var(--claude-slate-300);
+                --text-muted: var(--claude-slate-400);
+                --border-color: var(--claude-slate-700);
+                --accent-primary: var(--claude-teal-light);
+                --accent-hover: var(--claude-teal);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--claude-teal) 0%, var(--claude-teal-dark) 100%);
+            color: white;
+            padding: var(--space-lg);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .header p {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0.95;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xs);
+            padding: var(--space-md);
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: var(--space-sm) var(--space-md);
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-accent);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-lg);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--accent-primary);
+            flex-wrap: wrap;
+        }
+
+        .card-icon {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+
+        .card-title {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        /* Lists */
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: var(--space-sm) 0;
+            padding-left: var(--space-xl);
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .workflow-steps {
+            list-style: none;
+            counter-reset: step-counter;
+            padding-left: 0;
+        }
+
+        .workflow-steps li {
+            counter-increment: step-counter;
+            padding: var(--space-md);
+            padding-left: 3rem;
+            position: relative;
+            margin-bottom: var(--space-md);
+            background: var(--bg-accent);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-primary);
+            word-wrap: break-word;
+        }
+
+        .workflow-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: var(--space-md);
+            top: var(--space-md);
+            background: var(--accent-primary);
+            color: white;
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--claude-slate-900);
+            color: var(--claude-slate-100);
+            padding: var(--space-md);
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            margin: var(--space-md) 0;
+            border: 1px solid var(--claude-slate-700);
+        }
+
+        .code-block code {
+            color: var(--claude-teal-light);
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 20px;
+            font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+            font-weight: 600;
+            margin-right: var(--space-xs);
+            margin-bottom: var(--space-xs);
+        }
+
+        .tag.secondary {
+            background: var(--accent-secondary);
+        }
+
+        .tag.neutral {
+            background: var(--claude-slate-400);
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: var(--space-md);
+            border-radius: 8px;
+            margin: var(--space-md) 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(0, 168, 150, 0.1);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .alert-warning {
+            background: rgba(255, 111, 97, 0.1);
+            border-color: var(--accent-secondary);
+            color: var(--text-primary);
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+        }
+
+        /* Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-md) 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            display: block;
+            overflow-x: auto;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            min-width: 600px;
+        }
+
+        .comparison-table th {
+            background: var(--accent-primary);
+            color: white;
+            padding: var(--space-md);
+            text-align: left;
+            font-weight: 600;
+            font-size: clamp(0.85rem, 2vw, 1rem);
+        }
+
+        .comparison-table td {
+            padding: var(--space-md);
+            border-top: 1px solid var(--border-color);
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--bg-accent);
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            color: var(--text-primary);
+            border-bottom: 3px solid var(--accent-primary);
+            padding-bottom: var(--space-sm);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--space-xl);
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--border-color);
+            margin-top: var(--space-2xl);
+            color: var(--text-secondary);
+            font-size: clamp(0.85rem, 2vw, 1rem);
+        }
+
+        .footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin-bottom: var(--space-md);
+        }
+
+        .accordion-header {
+            background: var(--bg-secondary);
+            padding: var(--space-md);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            transition: background 0.2s ease;
+        }
+
+        .accordion-header:hover {
+            background: var(--bg-accent);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .accordion.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 var(--space-md);
+        }
+
+        .accordion.open .accordion-content {
+            max-height: 2000px;
+            padding: var(--space-md);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--space-md);
+            }
+
+            .nav-tabs {
+                padding: var(--space-sm);
+                gap: var(--space-xs);
+            }
+
+            .nav-tab {
+                padding: var(--space-xs) var(--space-sm);
+                font-size: 0.8rem;
+            }
+
+            .card {
+                padding: var(--space-md);
+            }
+
+            .workflow-steps li {
+                padding-left: 2.5rem;
+            }
+
+            .workflow-steps li::before {
+                width: 1.5rem;
+                height: 1.5rem;
+                font-size: 0.8rem;
+                left: var(--space-sm);
+            }
+
+            h4 {
+                font-size: 1rem;
+                margin-top: var(--space-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: var(--space-md);
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🤖 Claude.skills & Agent Teams</h1>
+        <p>Quick Reference Guide for Advanced Claude Usage</p>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="overview">Overview</button>
+        <button class="nav-tab" data-tab="skills">Building Skills</button>
+        <button class="nav-tab" data-tab="agent-teams">Agent Teams</button>
+        <button class="nav-tab" data-tab="best-practices">Best Practices</button>
+        <button class="nav-tab" data-tab="troubleshooting">Troubleshooting</button>
+    </nav>
+
+    <div class="container">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview">
+            <h2 class="section-header">What You Need to Know</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📚</span>
+                        <h3 class="card-title">Claude.skills</h3>
+                    </div>
+                    <p><strong>Reusable knowledge modules</strong> stored in <code>.claude/skills/</code> that extend Claude's capabilities with project-specific, team-specific, or domain-specific information.</p>
+                    <div class="alert alert-info">
+                        <div class="alert-title">💡 Key Benefit</div>
+                        Skills are loaded automatically when relevant, reducing context window overhead and ensuring consistent application of best practices.
+                    </div>
+                    <ul class="checklist">
+                        <li>Stored in <code>.claude/skills/</code> directory</li>
+                        <li>Automatically triggered by context</li>
+                        <li>Contains workflows & reference data</li>
+                        <li>Manually invokable with <code>/skill-name</code></li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">👥</span>
+                        <h3 class="card-title">Agent Teams</h3>
+                    </div>
+                    <p><strong>Multiple independent Claude Code instances</strong> working together on complex tasks with peer-to-peer messaging and shared task lists.</p>
+                    <div class="alert alert-warning">
+                        <div class="alert-title">⚠️ Experimental Feature</div>
+                        Enable with: <code>export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code>
+                    </div>
+                    <ul class="checklist">
+                        <li>Independent context windows</li>
+                        <li>Peer-to-peer messaging</li>
+                        <li>Shared task list with dependencies</li>
+                        <li>Ideal for parallel work streams</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">When to Use What</h3>
+                </div>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Best For</th>
+                                <th>Avoid For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Claude.skills</strong></td>
+                                <td>Repeatable workflows, project conventions, reference data, domain knowledge</td>
+                                <td>One-time instructions, common knowledge Claude already has</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Agent Teams</strong></td>
+                                <td>Parallel exploration, multi-perspective analysis, independent features</td>
+                                <td>Sequential dependencies, shared state requiring sync, simple linear workflows</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Tab -->
+        <div class="tab-content" id="skills">
+            <h2 class="section-header">Building Effective Claude.skills</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🔄</span>
+                    <h3 class="card-title">Evaluation-Driven Development</h3>
+                </div>
+                <ol class="workflow-steps">
+                    <li><strong>Complete task without skill</strong> - Work through problem with Claude, noting what context you repeatedly provide</li>
+                    <li><strong>Identify reusable pattern</strong> - Recognize workflows, schemas, rules, naming conventions</li>
+                    <li><strong>Ask Claude to create skill</strong> - "Create a Skill that captures this pattern we just used"</li>
+                    <li><strong>Review for conciseness</strong> - Remove unnecessary explanations Claude already knows</li>
+                    <li><strong>Test with fresh instance</strong> - Use skill in new Claude session on similar tasks</li>
+                    <li><strong>Iterate based on observation</strong> - Return with specific observations from Claude's behavior</li>
+                </ol>
+                <div class="alert alert-info">
+                    <div class="alert-title">💡 Pro Tip</div>
+                    "Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones." - Anthropic Docs
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📝</span>
+                        <h3 class="card-title">Skill Structure</h3>
+                    </div>
+                    <div class="code-block">
+<pre><code>---
+name: skill-name
+description: "Specific description with 
+  key terms and trigger conditions"
+user-invocable: true
+---
+
+## Purpose
+What this skill does
+
+## Usage
+When and how to use it
+
+## Examples
+Concrete examples of desired output
+
+## Reference Data
+Tables, schemas, patterns</code></pre>
+                    </div>
+                    <span class="tag">YAML Frontmatter</span>
+                    <span class="tag secondary">Markdown Body</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">✨</span>
+                        <h3 class="card-title">Content Best Practices</h3>
+                    </div>
+                    <ul class="checklist">
+                        <li><strong>Be concise</strong> - Remove what Claude already knows</li>
+                        <li><strong>Use decision trees</strong> - Guide through workflows with branching</li>
+                        <li><strong>Show examples</strong> - Demonstrate desired style more than describing</li>
+                        <li><strong>Provide defaults</strong> - Give recommended approach with alternatives</li>
+                        <li><strong>Make rules prominent</strong> - Use "MUST" or "IMPORTANT:" for critical items</li>
+                        <li><strong>Use forward slashes</strong> - Unix paths work everywhere</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎨</span>
+                    <h3 class="card-title">Common Skill Patterns</h3>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <span>Project Context Skills</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Capture project-specific information:</p>
+                        <ul>
+                            <li>Component locations and organization</li>
+                            <li>Design token usage and theme configuration</li>
+                            <li>Import conventions and path aliases</li>
+                            <li>State management patterns</li>
+                            <li>API integration details</li>
+                        </ul>
+                        <div class="code-block">
+<pre><code>## Design Token Usage
+- Colors defined as CSS variables in 
+  `src/styles/tokens.css`
+- IMPORTANT: Never hardcode hex colors
+- Use `var(--color-*)` tokens
+- Spacing uses 4px base scale</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <span>Multi-Phase Workflows</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>For complex processes with MCP tools:</p>
+                        <ol class="workflow-steps">
+                            <li>Phase separation - Break into distinct phases</li>
+                            <li>Data passing - Explicitly pass info between phases</li>
+                            <li>Validation gates - Verify completion before next</li>
+                            <li>Centralized error handling - Handle failures gracefully</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <span>Iterative Refinement</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>For tasks improving through iteration:</p>
+                        <ul>
+                            <li>Generate initial version</li>
+                            <li>Run validation against quality criteria</li>
+                            <li>Identify specific issues</li>
+                            <li>Address each issue systematically</li>
+                            <li>Re-validate until quality threshold met</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Teams Tab -->
+        <div class="tab-content" id="agent-teams">
+            <h2 class="section-header">Coordinating Agent Teams</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">Getting Started</h3>
+                </div>
+                <div class="code-block">
+<pre><code># Enable Agent Teams (experimental)
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+
+# Start Claude Code
+claude
+
+# Or use split-pane mode with tmux
+claude --teammate-mode</code></pre>
+                </div>
+                <p><strong>Start your first team:</strong></p>
+                <div class="code-block">
+<pre><code>"Create a team to research renewable energy. 
+Have three teammates explore: 
+(1) solar technology advances, 
+(2) wind energy economics, 
+(3) policy changes. 
+Each works independently then synthesize."</code></pre>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🏗️</span>
+                        <h3 class="card-title">Architecture</h3>
+                    </div>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Team Lead</strong></td>
+                                    <td>Creates team, spawns teammates, coordinates work</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Teammates</strong></td>
+                                    <td>Independent Claude Code instances on assigned tasks</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Task List</strong></td>
+                                    <td>Shared work items with dependency tracking</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mailbox</strong></td>
+                                    <td>Peer-to-peer messaging between all agents</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="alert alert-info">
+                        <div class="alert-title">🗂️ Local Storage</div>
+                        <p>Team config: <code>~/.claude/teams/{team-name}/config.json</code></p>
+                        <p>Task list: <code>~/.claude/tasks/{team-name}/</code></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🎮</span>
+                        <h3 class="card-title">Display Modes</h3>
+                    </div>
+                    <h4>In-Process Mode</h4>
+                    <ul class="checklist">
+                        <li>All teammates in main terminal</li>
+                        <li>Shift+Up/Down to select teammate</li>
+                        <li>Enter to view session, Escape to interrupt</li>
+                        <li>Ctrl+T to toggle task list</li>
+                        <li>Works in any terminal</li>
+                    </ul>
+                    <h4 style="margin-top: 1rem;">Split-Pane Mode</h4>
+                    <ul class="checklist">
+                        <li>Each teammate in own pane</li>
+                        <li>View all outputs simultaneously</li>
+                        <li>Click into pane to interact</li>
+                        <li>Requires tmux or iTerm2</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">⚙️</span>
+                    <h3 class="card-title">Coordination Patterns</h3>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h4>Delegate Mode</h4>
+                        <p><strong>Press Shift+Tab</strong> to enable delegate mode</p>
+                        <p>Restricts lead to coordination-only tools:</p>
+                        <ul class="checklist">
+                            <li>Spawning teammates</li>
+                            <li>Messaging teammates</li>
+                            <li>Shutting down teammates</li>
+                            <li>Managing task list</li>
+                        </ul>
+                        <div class="alert alert-warning">
+                            <div class="alert-title">⚠️ Common Issue</div>
+                            Without delegate mode, lead sometimes starts implementing instead of coordinating.
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Direct Communication</h4>
+                        <p>Message any teammate directly:</p>
+                        <ul class="checklist">
+                            <li>Give additional instructions</li>
+                            <li>Ask follow-up questions</li>
+                            <li>Redirect approach mid-task</li>
+                            <li>Provide context others lack</li>
+                        </ul>
+                        <p><strong>In-process:</strong> Shift+Up/Down to select, then type</p>
+                        <p><strong>Split-pane:</strong> Click into teammate's pane</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">When to Use Agent Teams</h3>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h4>✅ Ideal Scenarios</h4>
+                        <ul class="checklist">
+                            <li><strong>Parallel exploration</strong> - Multiple independent research threads</li>
+                            <li><strong>Multi-perspective analysis</strong> - Same problem, different viewpoints</li>
+                            <li><strong>Distributed implementation</strong> - Independent features/modules</li>
+                            <li><strong>Concurrent testing</strong> - Multiple test suites</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>❌ Poor Scenarios</h4>
+                        <ul class="checklist">
+                            <li>Sequential dependencies (B waits for A)</li>
+                            <li>Shared state requiring sync</li>
+                            <li>Simple linear workflows</li>
+                            <li>Tasks needing frequent human input</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-info">
+                    <div class="alert-title">💡 Team Size</div>
+                    2-4 teammates typically optimal. More increases coordination overhead.
+                </div>
+            </div>
+        </div>
+
+        <!-- Best Practices Tab -->
+        <div class="tab-content" id="best-practices">
+            <h2 class="section-header">General Best Practices</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Prompt Engineering for Claude 4.6</h3>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h4>Be Specific and Explicit</h4>
+                        <div class="code-block">
+<pre><code>❌ "Make this better"
+
+✅ "Create an analytics dashboard. 
+Include as many relevant features 
+and interactions as possible. Go 
+beyond basics to create a 
+fully-featured implementation."</code></pre>
+                        </div>
+                        <p>Provide context or motivation behind instructions to help Claude understand goals.</p>
+                    </div>
+                    <div>
+                        <h4>Leverage Long-Horizon Reasoning</h4>
+                        <ul class="checklist">
+                            <li>Use first context for framework setup</li>
+                            <li>Subsequent windows iterate on todo-list</li>
+                            <li>Write tests in structured format first</li>
+                            <li>Provide verification tools</li>
+                            <li>Encourage complete context usage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🔧</span>
+                    <h3 class="card-title">Behavioral Adjustments</h3>
+                </div>
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <span>More Proactive Action-Taking</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="code-block">
+<pre><code>&lt;default_to_action&gt;
+By default, implement changes rather 
+than only suggesting them. If user's 
+intent is unclear, infer the most 
+useful likely action and proceed.
+&lt;/default_to_action&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <span>More Hesitant, Research-First</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="code-block">
+<pre><code>&lt;do_not_act_before_instructions&gt;
+Do not jump into implementation unless 
+clearly instructed. When intent is 
+ambiguous, default to providing info 
+and recommendations rather than action.
+&lt;/do_not_act_before_instructions&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <span>Avoid Over-Engineering</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="alert alert-warning">
+                            <div class="alert-title">⚠️ Key Principle</div>
+                            "Only make changes that are directly requested or clearly necessary."
+                        </div>
+                        <ul class="checklist">
+                            <li><strong>Scope:</strong> Don't add unrequested features</li>
+                            <li><strong>Documentation:</strong> Don't add docstrings to unchanged code</li>
+                            <li><strong>Defensive coding:</strong> Don't add error handling for impossible scenarios</li>
+                            <li><strong>Abstractions:</strong> Don't create helpers for one-time operations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🧹</span>
+                    <h3 class="card-title">Context Management</h3>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h4>Provide Rich Content</h4>
+                        <ul class="checklist">
+                            <li>Reference files with <code>@filename</code></li>
+                            <li>Paste images directly (drag & drop)</li>
+                            <li>Give URLs for docs/APIs</li>
+                            <li>Pipe in data: <code>cat error.log | claude</code></li>
+                            <li>Let Claude fetch what it needs</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Avoid Context Pollution</h4>
+                        <div class="alert alert-warning">
+                            <div class="alert-title">⚠️ Kitchen Sink Session</div>
+                            Starting with one task, asking unrelated things, returning to first. Context fills with irrelevant info.
+                        </div>
+                        <p><strong>Fix:</strong> Use <code>/clear</code> between unrelated tasks</p>
+                        <div class="alert alert-warning">
+                            <div class="alert-title">⚠️ Correcting Over and Over</div>
+                            Claude wrong, you correct, still wrong, correct again. Context pollutes with failed approaches.
+                        </div>
+                        <p><strong>Fix:</strong> After 2 failed corrections, <code>/clear</code> and reformulate</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎨</span>
+                    <h3 class="card-title">Frontend Design</h3>
+                </div>
+                <h4>Avoid Generic AI Aesthetics</h4>
+                <ul class="checklist">
+                    <li>Overused fonts (Inter, Roboto, Arial)</li>
+                    <li>Clichéd color schemes (purple gradients on white)</li>
+                    <li>Predictable layouts</li>
+                    <li>Cookie-cutter design</li>
+                </ul>
+                <div class="code-block">
+<pre><code>&lt;frontend_aesthetics&gt;
+Interpret creatively and make unexpected 
+choices. Vary between light/dark themes, 
+different fonts, different aesthetics. 
+Think outside the box!
+&lt;/frontend_aesthetics&gt;</code></pre>
+                </div>
+
+                <h4 style="margin-top: 1rem;">Investigate Before Answering</h4>
+                <div class="alert alert-info">
+                    <div class="alert-title">💡 Golden Rule</div>
+                    "Never speculate about code you have not opened."
+                </div>
+                <div class="code-block">
+<pre><code>&lt;investigate_before_answering&gt;
+If user references a specific file, 
+you MUST read it before answering. 
+Never make claims about code before 
+investigating.
+&lt;/investigate_before_answering&gt;</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🤖</span>
+                    <h3 class="card-title">Model Selection</h3>
+                </div>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Best For</th>
+                                <th>Characteristics</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Opus 4.6</strong></td>
+                                <td>Complex reasoning, architecture</td>
+                                <td>Maximum intelligence, adaptive thinking, upfront exploration</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sonnet 4.5</strong></td>
+                                <td>Most tasks, balanced workflow</td>
+                                <td>Excellent performance/speed balance</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Haiku 4.5</strong></td>
+                                <td>Simple implementation</td>
+                                <td>Fast, cost-effective</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info">
+                    <div class="alert-title">✨ Adaptive Thinking</div>
+                    Opus 4.6 dynamically decides when and how much to think based on effort parameter and query complexity.
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting Tab -->
+        <div class="tab-content" id="troubleshooting">
+            <h2 class="section-header">Common Issues & Solutions</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🔍</span>
+                    <h3 class="card-title">Skill Issues</h3>
+                </div>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Problem</th>
+                                <th>Cause</th>
+                                <th>Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Skill not loading</td>
+                                <td>Unclear name/description</td>
+                                <td>Add specific keywords and trigger conditions in description</td>
+                            </tr>
+                            <tr>
+                                <td>Instructions ignored</td>
+                                <td>Too verbose or buried</td>
+                                <td>Condense content, move critical items to top, use IMPORTANT</td>
+                            </tr>
+                            <tr>
+                                <td>Over-triggering</td>
+                                <td>Description too broad</td>
+                                <td>Narrow scope, add exclusion criteria</td>
+                            </tr>
+                            <tr>
+                                <td>Inconsistent results</td>
+                                <td>Missing examples</td>
+                                <td>Add concrete examples of desired output</td>
+                            </tr>
+                            <tr>
+                                <td>Instructions too long</td>
+                                <td>Over-documentation</td>
+                                <td>Use bullet points, move details to reference files</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">👥</span>
+                    <h3 class="card-title">Agent Team Issues</h3>
+                </div>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Problem</th>
+                                <th>Cause</th>
+                                <th>Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lead implementing instead of coordinating</td>
+                                <td>Not in delegate mode</td>
+                                <td>Press Shift+Tab to enable delegate mode</td>
+                            </tr>
+                            <tr>
+                                <td>Teammates blocked</td>
+                                <td>Task dependencies</td>
+                                <td>Restructure tasks to reduce coupling</td>
+                            </tr>
+                            <tr>
+                                <td>Permission errors</td>
+                                <td>Inherited restricted mode</td>
+                                <td>Adjust teammate permissions individually after spawn</td>
+                            </tr>
+                            <tr>
+                                <td>Context confusion</td>
+                                <td>Unclear role definitions</td>
+                                <td>Message teammates directly with clarifications</td>
+                            </tr>
+                            <tr>
+                                <td>High token usage</td>
+                                <td>Too many teammates/long contexts</td>
+                                <td>Use Haiku for simple tasks, reduce team size</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">⚡</span>
+                        <h3 class="card-title">Quick Fixes</h3>
+                    </div>
+                    <h4>Context Issues</h4>
+                    <ul class="checklist">
+                        <li><code>/clear</code> between unrelated tasks</li>
+                        <li>After 2 failed corrections, start fresh</li>
+                        <li>Use <code>@filename</code> for file references</li>
+                        <li>Pipe data directly instead of pasting</li>
+                    </ul>
+
+                    <h4 style="margin-top: 1rem;">Skill Testing</h4>
+                    <ul class="checklist">
+                        <li>Test with fresh Claude instance</li>
+                        <li>Use actual tasks, not contrived scenarios</li>
+                        <li>Observe behavior, iterate based on usage</li>
+                        <li>Return to skill-creator Claude with specifics</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📋</span>
+                        <h3 class="card-title">Diagnostic Checklist</h3>
+                    </div>
+                    <h4>Skill Not Working?</h4>
+                    <ol class="workflow-steps">
+                        <li>Check skill is in <code>.claude/skills/</code></li>
+                        <li>Verify <code>SKILL.md</code> has frontmatter</li>
+                        <li>Test description specificity</li>
+                        <li>Look for over-verbose content</li>
+                        <li>Confirm examples are present</li>
+                    </ol>
+
+                    <h4 style="margin-top: 1rem;">Agent Team Not Coordinating?</h4>
+                    <ol class="workflow-steps">
+                        <li>Verify EXPERIMENTAL flag is set</li>
+                        <li>Check if lead is in delegate mode</li>
+                        <li>Review task dependencies</li>
+                        <li>Ensure roles are clearly defined</li>
+                        <li>Look for sequential bottlenecks</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💬</span>
+                    <h3 class="card-title">Community Tips</h3>
+                </div>
+                <div class="alert alert-info">
+                    <div class="alert-title">💡 From Power Users</div>
+                    <p>"Long prompts break down because context gets noisy. Skills move repeatable instructions out of the prompt. Claude loads them only when relevant."</p>
+                </div>
+                <div class="alert alert-info">
+                    <div class="alert-title">💡 From Anthropic Engineers</div>
+                    <p>"The most effective Skill development process involves Claude itself. Work with one instance to create a Skill that will be used by other instances."</p>
+                </div>
+                <div class="alert alert-info">
+                    <div class="alert-title">💡 From Developers</div>
+                    <p>"I use Claude Code to rapidly prototype design system variations, generate component libraries from Figma designs, and test accessibility across devices."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Built with Claude's design system colors | <a href="#overview">Back to Top</a></p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+            <span class="tag">Teal #00a896</span>
+            <span class="tag secondary">Coral #ff6f61</span>
+            <span class="tag neutral">Slate #334155</span>
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.85rem;">
+            Sources: Anthropic Docs, Claude Code Documentation, Community Insights (Feb 2026)
+        </p>
+    </footer>
+
+    <script>
+        // Tab switching
+        const tabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+
+                // Update active states
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Accordion functionality
+        const accordions = document.querySelectorAll('.accordion');
+
+        accordions.forEach(accordion => {
+            const header = accordion.querySelector('.accordion-header');
+
+            header.addEventListener('click', () => {
+                accordion.classList.toggle('open');
+            });
+        });
+
+        // Add smooth scrolling to all internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
